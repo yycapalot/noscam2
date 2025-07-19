@@ -28,7 +28,7 @@ Prerequisites
 Installation
 1.	Clone the repository
 bash
-git clone https://github.com/your-repo/deepfake-audio-detector.git
+git clone https://github.com/yycapalot/noscam2.git
 cd deepfake-audio-detector
 2.	Set up a virtual environment (recommended)
 bash
