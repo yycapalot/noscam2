@@ -158,8 +158,16 @@ def upload_file():
 def prediction_model(user_id, filename, sample_rate, standardized_path):
     if standardized_path:
         print(f"[✓] File uploaded and standardized: {standardized_path}")
-        
-        # Receive tuple: (label, confidence)
+
+        # Load audio to calculate duration
+        try:
+            audio_data, _ = librosa.load(standardized_path, sr=sample_rate)
+            duration = len(audio_data) / sample_rate
+        except Exception as e:
+            print(f"[✗] Failed to calculate duration: {e}")
+            duration = 0.0
+
+        # Get prediction
         label, confidence = deepfake_detector.predict(standardized_path)
 
         if label:
@@ -170,9 +178,10 @@ def prediction_model(user_id, filename, sample_rate, standardized_path):
                 'filename': filename,
                 'standardized_file': os.path.basename(standardized_path),
                 'sample_rate': sample_rate,
+                'duration': round(duration, 2),  # 🆕 duration added here
                 'usage_count': user_data[user_id]['usage_count'],
                 'prediction': label.capitalize(),  # 'Real' or 'Fake'
-                'confidence': round(confidence, 4),  # Optional rounding
+                'confidence': round(confidence, 4),
                 'analyzed_on': datetime.now().strftime('%d %b %Y'),
                 'user_info': user_data[user_id]
             })
@@ -180,6 +189,7 @@ def prediction_model(user_id, filename, sample_rate, standardized_path):
             return jsonify({'error': 'Prediction failed'}), 500
     else:
         return jsonify({'error': 'Prediction failed: Prediction model'}), 500
+
 
 
 
