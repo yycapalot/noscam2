@@ -3,12 +3,19 @@ Deepfake Audio Detector - README
 📌 Overview
 The Deepfake Audio Detector is an AI-powered web application that analyzes audio files to detect AI-generated (deepfake) voices. It uses a TensorFlow/Keras deep learning model trained on mel-spectrogram features to classify audio clips as either Real (authentic) or Fake (AI-generated).
 🔍 Key Features:
+
 ✅ File Upload & Analysis – Supports WAV, MP3, OGG, and FLAC formats
+
 ✅ Real-Time Recording – Record audio directly from your microphone for instant analysis
+
 ✅ Deep Learning Model – Uses a CNN-based classifier for high-accuracy detection
+
 ✅ Confidence Scoring – Provides a percentage-based confidence level for predictions
+
 ✅ Usage Tracking – Free tier allows 3 detections per session (subscription for unlimited)
+
 ✅ AI Chatbot Assistant – Get help with usage, formats, and technical questions
+
 ✅ Responsive UI – Works on desktop and mobile devices
 ________________________________________
 🚀 Quick Start
