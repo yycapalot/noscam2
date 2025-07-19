@@ -486,7 +486,7 @@
                         </div>
                         <div class="mt-3">
                             <button class="btn btn-primary" id="uploadBtn" disabled>
-                                <i class="fas fa-analyze"></i> Standardize Audio
+                                <i class="fas fa-analyze"></i> Detect Audio
                             </button>
                             <div class="spinner-border spinner-border-sm ms-2 d-none" id="loadingSpinner"></div>
                         </div>
@@ -524,27 +524,17 @@
                                 </div>
                             </div>
                             <body class="bg-light">
-                                <br> <br> <br>
+                                <br> 
                         <div class="container mt-4" id="resultSection" style="display: none;">
-                        <div class="result-card fade-in" id="resultCard">
+                        <!-- FAKE Audio Result Card -->
+                        <div class="result-card fade-in d-none" id="fakeResultCard">
                             <div class="result-header">
                                 <div class="result-icon fake-icon">
                                     <i class="fas fa-exclamation-triangle"></i>
                                 </div>
-                                <h2 class="result-title fake-title" id="resultTitle">DEEPFAKE DETECTED</h2>
-                                <p class="text-muted mb-0" id="resultSubtitle">This audio appears to be artificially generated</p>
+                                <h2 class="result-title fake-title" id="resultTitleFake">DEEPFAKE DETECTED</h2>
+                                <p class="text-muted mb-0" id="resultSubtitleFake">This audio appears to be artificially generated</p>
                             </div>
-
-                            <div class="confidence-container px-4">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="small text-muted">CONFIDENCE LEVEL</span>
-                                    <span class="confidence-text fake-title" id="confidenceText">0%</span>
-                                </div>
-                                <div class="confidence-bar">
-                                    <div class="confidence-fill fake-confidence" id="confidenceFill" style="width: 0%;"></div>
-                                </div>
-                            </div>
-
                             <div class="warning-banner" id="warningBanner">
                                 <i class="fas fa-shield-alt warning-icon"></i>
                                 <div class="warning-text">
@@ -559,25 +549,49 @@
                                 <div class="detail-item">
                                     <div class="detail-icon"><i class="fas fa-file-audio"></i></div>
                                     <div class="detail-label">File Name</div>
-                                    <div class="detail-value" id="fileName">-</div>
+                                    <div class="detail-value" id="fileNameFake">-</div>
                                 </div>
-
                                 <div class="detail-item">
                                     <div class="detail-icon"><i class="fas fa-wave-square"></i></div>
                                     <div class="detail-label">Sample Rate</div>
-                                    <div class="detail-value" id="sampleRate">-</div>
+                                    <div class="detail-value" id="sampleRateFake">-</div>
                                 </div>
-
                                 <div class="detail-item">
-                                    <div class="detail-icon"><i class="fas fa-stopwatch"></i></div>
-                                    <div class="detail-label">Processing Time</div>
-                                    <div class="detail-value" id="processingTime">2.4s</div>
+                                    <div class="detail-icon"><i class="fas fa-clock"></i></div>
+                                    <div class="detail-label">Audio Duration</div>
+                                    <div class="detail-value" id="audioDurationFake">0.0s</div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
+                        <!-- REAL Audio Result Card -->
+                        <div class="result-card fade-in d-none" id="realResultCard">
+                            <div class="result-header">
+                                <div class="result-icon" style="color: #4caf50;">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <h2 class="result-title" style="color: #4caf50;" id="resultTitleReal">REAL AUDIO DETECTED</h2>
+                                <p class="text-muted mb-0" id="resultSubtitleReal">This audio appears to be authentic and human-recorded.</p>
+                            </div>
 
+                            <div class="details-grid">
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-file-audio"></i></div>
+                                    <div class="detail-label">File Name</div>
+                                    <div class="detail-value" id="fileNameReal">-</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-wave-square"></i></div>
+                                    <div class="detail-label">Sample Rate</div>
+                                    <div class="detail-value" id="sampleRateReal">-</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon"><i class="fas fa-clock"></i></div>
+                                    <div class="detail-label">Audio Duration</div>
+                                    <div class="detail-value" id="audioDurationReal">0.0s</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div id="resultContainer"></div>
@@ -721,27 +735,27 @@
         }
         function updateResultCard(data) {
             document.getElementById('resultSection').style.display = 'block';
-
+            
             const confidencePercent = (data.confidence * 100).toFixed(1) + "%";
             const isFake = data.prediction.toLowerCase() === 'fake';
 
-            document.getElementById('resultTitle').innerText = data.prediction.toUpperCase() + " DETECTED";
-            document.getElementById('resultSubtitle').innerText = isFake
-                ? "This audio appears to be artificially generated"
-                : "This audio appears to be authentic";
+            // Hide both first
+            document.getElementById('fakeResultCard').classList.add('d-none');
+            document.getElementById('realResultCard').classList.add('d-none');
 
-            document.getElementById('confidenceText').innerText = confidencePercent;
-            document.getElementById('confidenceFill').style.width = confidencePercent;
+            if (isFake) {
+                document.getElementById('fakeResultCard').classList.remove('d-none');
+                document.getElementById("audioDurationFake").innerText = data.duration.toFixed(2) + "s";
+                document.getElementById('resultTitleFake').innerText = "DEEPFAKE DETECTED";   
+                document.getElementById('fileNameFake').innerText = data.filename;
+                document.getElementById('sampleRateFake').innerText = (data.sample_rate / 1000) + " kHz";
 
-            document.getElementById('fileName').innerText = data.filename;
-            document.getElementById('sampleRate').innerText = (data.sample_rate / 1000) + " kHz";
-
-            // Optional: Only update if these elements exist
-            if (document.getElementById('analyzedOn')) {
-                document.getElementById('analyzedOn').innerText = data.analyzed_on;
-            }
-            if (document.getElementById('duration')) {
-                document.getElementById('duration').innerText = data.duration || "-";
+            } else {
+                document.getElementById('realResultCard').classList.remove('d-none');
+                document.getElementById('resultTitleReal').innerText = "REAL AUDIO DETECTED";
+                document.getElementById("audioDurationReal").innerText = data.duration.toFixed(2) + "s";
+                document.getElementById('fileNameReal').innerText = data.filename;
+                document.getElementById('sampleRateReal').innerText = (data.sample_rate / 1000) + " kHz";
             }
         }
 
