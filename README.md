@@ -68,10 +68,13 @@ text
 deepfake-audio-detector/  
 ├── main.py            # Flask backend (routes, model prediction, chatbot)  
 ├── templates          # Frontend UI (upload, recording, results)  
-  └── subscription.html  
-  └── index.html
+    └── subscription.html  
+    └── index.html
 ├── uploads/           # Stores processed audio files  
-├── model/             # Contains the trained Keras model  
+├── model/ # Contains the trained Keras model  
+    └── deepfake_model_v2.keras
+    └── label_encoder_v2.pkl
+    └── scaler_v2.pkl
 ├── static/            # (Optional) CSS/JS assets  
 └── .env               # Environment variables  
 ________________________________________
