@@ -26,7 +26,7 @@ Prerequisites
 •	Librosa (for audio processing)
 •	Google Gemini API (for chatbot)
 Installation
-1.	Clone the repository
+1.	Clone the repository (2 branches: Main and Master)
 bash
 git clone https://github.com/yycapalot/noscam2.git
 cd deepfake-audio-detector
@@ -52,7 +52,7 @@ ________________________________________
 1. Audio Processing Pipeline
 •	Standardization: Converts all audio files to 16kHz WAV format.
 •	Feature Extraction: Extracts mel-spectrograms for deep learning analysis.
-•	Model Prediction: Uses a pre-trained CNN model to classify audio as real or fake.
+•	Model Prediction: Uses a pre-trained MLP model to classify audio as real or fake.
 2. Usage Flow
 •	Free Users: Limited to 3 detections per session.
 •	Subscribed Users: Unlimited detections (RM 9.99/month).
@@ -75,8 +75,7 @@ deepfake-audio-detector/
     └── deepfake_model_v2.keras
     └── label_encoder_v2.pkl
     └── scaler_v2.pkl
-├── static/            # (Optional) CSS/JS assets  
-└── .env               # Environment variables  
+└── .env              
 ________________________________________
 🔮 Future Improvements
 •	Multi-model Ensemble (improve accuracy)
